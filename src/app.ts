@@ -1,4 +1,5 @@
 import express, { type Request, type Response } from 'express';
+import userRoutes from './routes/userRoutes.ts';
 
 const app = express();
 
@@ -6,8 +7,11 @@ const app = express();
 app.use(express.json()); // Allows parsing JSON bodies
 
 // Rotas de teste /
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
     res.status(200).json({ status: 'OK', message: 'API is running successfully!' });
 });
+
+// User Routes
+app.use('/api', userRoutes);
 
 export default app;

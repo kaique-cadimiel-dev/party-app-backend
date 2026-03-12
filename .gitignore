@@ -1,3 +1,16 @@
 node_modules
 .env
 dist
+
+# Firebase / Google Cloud keys
+*.json
+!firebase.json
+!firestore.indexes.json
+!package.json
+!package-lock.json
+!tsconfig.json
+
+# IDE and System files
+.vscode/
+.idea/
+.DS_Store
