@@ -23,3 +23,13 @@ export const getUser = async (req: Request<{ id: string }>, res: Response): Prom
         res.status(404).json({ error: error.message });
     }
 };
+
+export const login = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userData = req.body;
+        const loginResponse = await userService.loginUser(userData);
+        res.status(200).json(loginResponse);
+    } catch (error: any) {
+        res.status(401).json({ error: error.message });
+    }
+};

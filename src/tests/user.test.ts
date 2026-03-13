@@ -7,11 +7,47 @@ import * as userService from '../services/userService.ts';
 vi.mock('../services/userService', () => ({
   createUser: vi.fn(),
   getUserById: vi.fn(),
+  loginUser: vi.fn(),
 }));
 
 describe('User API Endpoints', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  describe('POST /api/login', () => {
+    it('should return 200 and tokens for valid credentials', async () => {
+      const mockLoginResponse = {
+        idToken: 'mockIdToken',
+        email: 'test@example.com',
+        refreshToken: 'mockRefreshToken',
+        expiresIn: '3600',
+        localId: '123'
+      };
+      (userService.loginUser as Mock).mockResolvedValue(mockLoginResponse);
+
+      const response = await request(app)
+        .post('/api/login')
+        .send({ email: 'test@example.com', password: 'password123' });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(mockLoginResponse);
+      expect(userService.loginUser).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        password: 'password123',
+      });
+    });
+
+    it('should return 401 if login fails', async () => {
+      (userService.loginUser as Mock).mockRejectedValue(new Error('INVALID_PASSWORD'));
+
+      const response = await request(app)
+        .post('/api/login')
+        .send({ email: 'test@example.com', password: 'wrongpassword' });
+
+      expect(response.status).toBe(401);
+      expect(response.body.error).toBe('INVALID_PASSWORD');
+    });
   });
 
   describe('POST /api/users', () => {
