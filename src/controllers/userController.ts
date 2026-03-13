@@ -33,3 +33,17 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         res.status(401).json({ error: error.message });
     }
 };
+
+export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            res.status(400).json({ error: 'Email is required' });
+            return;
+        }
+        await userService.sendPasswordResetEmail(email);
+        res.status(200).json({ message: 'Password reset email sent successfully' });
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+};

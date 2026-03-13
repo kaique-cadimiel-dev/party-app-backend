@@ -8,11 +8,46 @@ vi.mock('../services/userService', () => ({
   createUser: vi.fn(),
   getUserById: vi.fn(),
   loginUser: vi.fn(),
+  sendPasswordResetEmail: vi.fn(),
 }));
 
 describe('User API Endpoints', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  describe('POST /api/forgot-password', () => {
+    it('should return 200 when email is successfully sent', async () => {
+      (userService.sendPasswordResetEmail as Mock).mockResolvedValue(undefined);
+
+      const response = await request(app)
+        .post('/api/forgot-password')
+        .send({ email: 'test@example.com' });
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Password reset email sent successfully');
+      expect(userService.sendPasswordResetEmail).toHaveBeenCalledWith('test@example.com');
+    });
+
+    it('should return 400 if email is missing', async () => {
+      const response = await request(app)
+        .post('/api/forgot-password')
+        .send({});
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Email is required');
+    });
+
+    it('should return 400 if service fails', async () => {
+      (userService.sendPasswordResetEmail as Mock).mockRejectedValue(new Error('User not found'));
+
+      const response = await request(app)
+        .post('/api/forgot-password')
+        .send({ email: 'nonexistent@example.com' });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('User not found');
+    });
   });
 
   describe('POST /api/login', () => {

@@ -57,3 +57,29 @@ export const loginUser = async (userData: UserRequest): Promise<LoginResponse> =
 
     return data as LoginResponse;
 };
+
+export const sendPasswordResetEmail = async (email: string): Promise<void> => {
+    const API_KEY = process.env.FIREBASE_API_KEY;
+    if (!API_KEY) {
+        throw new Error('FIREBASE_API_KEY is not defined in environment variables');
+    }
+
+    const response = await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${API_KEY}`,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                requestType: 'PASSWORD_RESET',
+                email: email,
+            }),
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        console.error('Firebase Auth Reset Error:', data.error);
+        throw new Error(data.error?.message || 'Password reset request failed');
+    }
+};

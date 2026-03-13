@@ -9,6 +9,9 @@ router.post('/users', userController.postUser);
 // Route POST /login
 router.post('/login', userController.login);
 
+// Route POST /forgot-password
+router.post('/forgot-password', userController.forgotPassword);
+
 // Route GET /users/:id
 router.get('/users/:id', userController.getUser);
 

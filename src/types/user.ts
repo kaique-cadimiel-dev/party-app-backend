@@ -10,3 +10,7 @@ export interface LoginResponse {
     expiresIn: string;
     localId: string;
 }
+
+export interface ForgotPasswordRequest {
+    email: string;
+}
