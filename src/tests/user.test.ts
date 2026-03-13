@@ -87,16 +87,17 @@ describe('User API Endpoints', () => {
 
   describe('POST /api/users', () => {
     it('should create a new user and return 201', async () => {
-      const mockUser = { uid: '123', email: 'test@example.com' };
+      const mockUser = { uid: '123', email: 'test@example.com', displayName: 'Test User' };
       (userService.createUser as Mock).mockResolvedValue(mockUser);
 
       const response = await request(app)
         .post('/api/users')
-        .send({ email: 'test@example.com', password: 'password123' });
+        .send({ name: 'Test User', email: 'test@example.com', password: 'password123' });
 
       expect(response.status).toBe(201);
       expect(response.body.user).toEqual(mockUser);
       expect(userService.createUser).toHaveBeenCalledWith({
+        name: 'Test User',
         email: 'test@example.com',
         password: 'password123',
       });
@@ -107,7 +108,7 @@ describe('User API Endpoints', () => {
 
       const response = await request(app)
         .post('/api/users')
-        .send({ email: 'test@example.com', password: 'password123' });
+        .send({ name: 'Test User', email: 'test@example.com', password: 'password123' });
 
       expect(response.status).toBe(400);
       expect(response.body.error).toBe('Firebase error');

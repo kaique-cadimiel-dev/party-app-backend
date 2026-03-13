@@ -7,11 +7,13 @@ export const createUser = async (userData: UserRequest) => {
     const userRecord = await auth.createUser({
         email: userData.email,
         password: userData.password,
+        displayName: userData.name,
     });
 
     // Optionally save user data to Firestore
     await db.collection('users').doc(userRecord.uid).set({
         email: userData.email,
+        name: userData.name,
         createdAt: new Date().toISOString(),
     });
 
